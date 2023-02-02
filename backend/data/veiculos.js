@@ -1,0 +1,122 @@
+export const dataVeiculos = [
+  {
+    plate: '0634-MJM',
+    brand: 'Lexus',
+    model: 'RX',
+    color: 'Green',
+    chassi: '21767diw19855',
+    status: 'disponivel',
+    activeStatus: false,
+    vehicle: 'caminhão',
+    fuel: 'diesel',
+    year: 2010
+  },
+  {
+    plate: '2912-AJY',
+    brand: 'BMW',
+    model: '7 Series',
+    color: 'Indigo',
+    chassi: '18387mqb90507',
+    status: 'reservado',
+    activeStatus: true,
+    vehicle: 'caminhão',
+    fuel: 'gasolina',
+    year: 1999
+  },
+  {
+    plate: '2019-3DT',
+    brand: 'MINI',
+    model: 'MINI',
+    color: 'Blue',
+    chassi: '602651rk39435',
+    status: 'reservado',
+    activeStatus: false,
+    vehicle: 'caminhão',
+    fuel: 'diesel',
+    year: 2002
+  },
+  {
+    plate: '1065-PUS',
+    brand: 'Mercury',
+    model: 'Mariner',
+    color: 'Maroon',
+    chassi: '79050oy637661',
+    status: 'reservado',
+    activeStatus: false,
+    vehicle: 'moto',
+    fuel: 'alcool',
+    year: 2008
+  },
+  {
+    plate: '6542-4CW',
+    brand: 'Acura',
+    model: 'TL',
+    color: 'Blue',
+    chassi: '863530jv25826',
+    status: 'reservado',
+    activeStatus: true,
+    vehicle: 'carro',
+    fuel: 'gasolina',
+    year: 2005
+  },
+  {
+    plate: '9083-NIL',
+    brand: 'Porsche',
+    model: '911',
+    color: 'Violet',
+    chassi: '92555q6792429',
+    status: 'reservado',
+    activeStatus: true,
+    vehicle: 'carro',
+    fuel: 'alcool',
+    year: 1998
+  },
+  {
+    plate: '1297-3XD',
+    brand: 'Mercury',
+    model: 'Cougar',
+    color: 'Mauv',
+    chassi: '34819u2338258',
+    status: 'disponivel',
+    activeStatus: true,
+    vehicle: 'caminhão',
+    fuel: 'alcool',
+    year: 1996
+  },
+  {
+    plate: '5567-WKT',
+    brand: 'Land Rover',
+    model: 'Range Rover',
+    color: 'Turquoise',
+    chassi: '03146kbe58301',
+    status: 'disponivel',
+    activeStatus: true,
+    vehicle: 'carro',
+    fuel: 'diesel',
+    year: 1998
+  },
+  {
+    plate: '3157-GEN',
+    brand: 'Chevrolet',
+    model: 'Cavalier',
+    color: 'Teal',
+    chassi: '49847lhh30667',
+    status: 'reservado',
+    activeStatus: true,
+    vehicle: 'carro',
+    fuel: 'gasolina',
+    year: 2001
+  },
+  {
+    plate: '1879-5OW',
+    brand: 'Chevrolet',
+    model: 'Cavalier',
+    color: 'Indigo',
+    chassi: '04505gdu54717',
+    status: 'disponivel',
+    activeStatus: false,
+    vehicle: 'carro',
+    fuel: 'alcool',
+    year: 1999
+  }
+]
