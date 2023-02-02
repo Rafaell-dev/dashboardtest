@@ -22,14 +22,14 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cors())
 
 //Importação de dados
-import motorista from './models/motorista.js'
-import { dataMotoristas } from './data/motoristas.js'
+// import motorista from './models/motorista.js'
+// import { dataMotoristas } from './data/motoristas.js'
 
-import Veiculo from './models/veiculo.js'
-import { dataVeiculos } from './data/veiculos.js'
+// import Veiculo from './models/veiculo.js'
+// import { dataVeiculos } from './data/veiculos.js'
 
-import User from './models/User.js'
-import { dataUser } from './data/index.js'
+// import User from './models/User.js'
+// import { dataUser } from './data/index.js'
 
 // Rotas
 // app.use('/motoristas', motoristaRoutes)
