@@ -1,5 +1,5 @@
-import { CssBaseline, ThemeProvider } from '@mui/material'
-import { createTheme } from '@mui/material/styles'
+import { CssBaseline, TextField, ThemeProvider } from '@mui/material'
+import { createTheme, styled } from '@mui/material/styles'
 import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
@@ -7,8 +7,8 @@ import { themeSettings } from 'theme'
 
 import Layout from 'scenes/layout/layout.jsx'
 import Dashboard from 'scenes/dashboard/dashboard.jsx'
-import Veiculos from 'scenes/veiculos/veiculo'
-import Motoristas from 'scenes/motoristas/motorista'
+import Veiculos from 'scenes/registros/vehicles'
+import Motoristas from 'scenes/registros/drivers'
 import Abastecimentos from 'scenes/abastecimentos/abastecimentos'
 import Retiradas from 'scenes/retiradas/retirada'
 import Login from 'scenes/login/Login'
@@ -26,7 +26,6 @@ function App() {
       <BrowserRouter>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-
           <ErrorBoundary>
             <Routes>
               <Route element={<Layout />}>

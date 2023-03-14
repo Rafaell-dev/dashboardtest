@@ -1,171 +1,222 @@
 import React from 'react'
-
 import {
   Box,
   Button,
   useTheme,
   useMediaQuery,
   TextField,
-  Autocomplete,
-  CircularProgress
+  Alert
 } from '@mui/material'
 import Header from 'components/HeaderV2'
 import { Save } from '@mui/icons-material'
-import dayjs from 'dayjs'
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { LocalizationProvider } from '@mui/x-date-pickers'
+import { usePostMotoristaMutation } from 'state/api'
+import { useFormik } from 'formik'
+import { motoristaSchema } from 'schemas'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { useForm } from 'react-hook-form'
-import { color } from '@mui/system'
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 
 const Motorista = () => {
-  const date = new Date().getFullYear().toString()
   const isNonMobile = useMediaQuery('(min-width: 1000px)')
   const theme = useTheme()
 
-  const [valueDay, setValueDay] = React.useState(dayjs('14/12/2003'))
+  const [createMotorista, { isLoading, isSuccess, isError, error }] =
+    usePostMotoristaMutation({ refetchOnMountOrArgChange: true })
 
-  const checkCep = e => {
-    const cep = e.target.value.replace(/\D/g, '')
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-      .then(res => res.json())
-      .then(data => {
-        console.log(data)
-        setValue('city', data.localidade)
-        setValue('state', data.uf)
-        setValue('address', data.bairro)
-        setValue('street', data.logradouro)
-        setFocus('number')
-      })
-  }
-  const { register, handleSubmit, setValue, setFocus } = useForm()
-  const style = {
-    '& .MuiOutlinedInput-root': {
-      '&.Mui-focused fieldset': {
-        borderColor: 'green'
+  const onSubmit = async (values, actions) => {
+    try {
+      const motoristaValues = {
+        name: values.name,
+        cnh: values.cnh,
+        city: values.city,
+        state: values.state,
+        birthday: values.birthday,
+        email: values.email,
+        phoneNumber: values.phoneNumber
       }
+      console.log(values)
+      createMotorista(motoristaValues)
+      console.log('submitted!')
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      resetForm()
+    } catch {
+      console.log('Não foi possivel salvar os dados' + isError)
     }
   }
+
+  const {
+    values,
+    errors,
+    touched,
+    handleBlur,
+    handleChange,
+    handleSubmit,
+    isValid,
+    resetForm,
+    setFieldValue
+  } = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      cnh: '',
+      state: '',
+      city: '',
+      birthday: '',
+      phoneNumber: ''
+    },
+    validationSchema: motoristaSchema,
+    onSubmit
+  })
+
+  let AlertFeedback
+  if (isLoading) {
+    AlertFeedback = <Alert severity="warning">Carregando...</Alert>
+  } else if (isSuccess) {
+    AlertFeedback = (
+      <Alert severity="success">Dados enviados com sucesso!</Alert>
+    )
+  } else if (isError) {
+    AlertFeedback = (
+      <Alert severity="error">Não foi possível salvar os dados!</Alert>
+    )
+  }
+
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="Motorista" subtitle="Cadastre um Motorista" />
-
-      <Box
-        mt="2rem"
-        display="grid"
-        gridTemplateColumns="repeat(3, minmax(0, 1fr))"
-        justifyContent="space-between"
-        rowGap="1.5rem"
-        columnGap="4%"
-        sx={{ '& > div': { gridColumn: isNonMobile ? undefined : 'span 4' } }}
-        component="form"
-      >
-        <TextField
-          autoComplete="disabled"
-          id="filled-read-name-input"
-          label="Nome"
-          defaultValue=""
-          variant="filled"
-        />
-        <TextField
-          autoComplete="disabled"
-          id="filled-read-cnh-input"
-          label="Registro CNH"
-          defaultValue=""
-          variant="filled"
-        />
-        <TextField
-          autoComplete="disabled"
-          id="cep"
-          label="CEP"
-          defaultValue=""
-          variant="filled"
-          onBlur={checkCep}
-        />
-        <TextField
-          autoComplete="disabled"
-          id="numero"
-          label="Número"
-          defaultValue=" "
-          variant="filled"
-          {...register('number')}
-        />
-        <TextField
-          autoComplete="disabled"
-          id="logradouro"
-          label="Endereço"
-          defaultValue=" "
-          variant="filled"
-          {...register('address')}
-        />
-        <TextField
-          autoComplete="disabled"
-          id="cidade"
-          label="Cidade"
-          defaultValue=" "
-          variant="filled"
-          {...register('city')}
-        />
-        <TextField
-          autoComplete="disabled"
-          id="estado"
-          label="Estado"
-          defaultValue=" "
-          variant="filled"
-          {...register('state')}
-        />
-        <TextField
-          autoComplete="disabled"
-          id="rua"
-          label="Rua"
-          defaultValue=" "
-          variant="filled"
-          {...register('street')}
-        />
-        <TextField
-          autoComplete="disabled"
-          id="filled-read-phoneNumber-input"
-          label="Celular"
-          defaultValue=""
-          variant="filled"
-          sx={style}
-        />
-
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            inputFormat="DD/MM/YYYY"
-            views={['day', 'month', 'year']}
-            type="date"
-            label="Data de Nascimento"
-            maxDate={date}
-            value={valueDay}
-            onChange={newValue => {
-              setValueDay(newValue)
-            }}
-            renderInput={params => <TextField {...params} error={false} />}
-          />
-        </LocalizationProvider>
-      </Box>
-      <Box
-        mt="20px"
-        display="grid"
-        gridTemplateColumns="repeat(0, minmax(1, 1fr))"
-        justifyContent="center"
-      >
-        <Button
+      <form onSubmit={handleSubmit} autoComplete="off">
+        <Box my="1rem">{AlertFeedback}</Box>
+        <Box
+          mt="2rem"
+          display="grid"
+          gridTemplateColumns="repeat(3, minmax(0, 1fr))"
+          justifyContent="space-between"
+          rowGap="1.5rem"
+          columnGap="4%"
           sx={{
-            paddingX: 10,
-            fontSize: 14,
-            mt: 4,
-            backgroundColor: theme.palette.background.alt
+            '& > div': { gridColumn: isNonMobile ? undefined : 'span 4' },
+
+            '& label.Mui-focused': {
+              color: theme.palette.secondary[200]
+            },
+            '& .MuiFormHelperText-root': {
+              color: '#D9002B',
+              fontWeight: 'bold'
+            }
           }}
-          size="large"
-          variant="primary"
-          endIcon={<Save />}
         >
-          Salvar
-        </Button>
-      </Box>
+          <TextField
+            autoComplete="disabled"
+            id="name"
+            label="Nome"
+            variant="filled"
+            type="text"
+            name="name"
+            value={values.name}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={errors.name && touched.name && `${errors.name}`}
+          />
+
+          <TextField
+            autoComplete="disabled"
+            id="cnh"
+            label="Registro CNH"
+            variant="filled"
+            value={values.cnh}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={errors.cnh && touched.cnh && `${errors.cnh}`}
+          />
+          <TextField
+            autoComplete="disabled"
+            id="email"
+            label="Email"
+            variant="filled"
+            value={values.email}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={errors.email && touched.email && `${errors.email}`}
+          />
+          <TextField
+            autoComplete="disabled"
+            id="city"
+            label="Cidade"
+            variant="filled"
+            value={values.city}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            helperText={errors.city && touched.city && `${errors.city}`}
+          />
+          <TextField
+            autoComplete="disabled"
+            id="state"
+            label="Estado"
+            variant="filled"
+            value={values.state}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            helperText={errors.state && touched.state && `${errors.state}`}
+          />
+          <TextField
+            autoComplete="disabled"
+            id="phoneNumber"
+            label="Celular"
+            variant="filled"
+            value={values.phoneNumber}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            helperText={
+              errors.phoneNumber &&
+              touched.phoneNumber &&
+              `${errors.phoneNumber}`
+            }
+          />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              disableFuture
+              id="birthday"
+              label="Data de Nascimento"
+              value={values.birthday || null}
+              onChange={date => {
+                setFieldValue('birthday', date)
+              }}
+              format="DD/MM/YYYY"
+              inputFormat="DD/MM/YYYY"
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  helperText={
+                    errors.birthday && touched.birthday && `${errors.birthday}`
+                  }
+                />
+              )}
+            />
+          </LocalizationProvider>
+        </Box>
+        <Box
+          mt="20px"
+          display="grid"
+          gridTemplateColumns="repeat(0, minmax(1, 1fr))"
+          justifyContent="center"
+        >
+          <Button
+            sx={{
+              paddingX: 10,
+              fontSize: 14,
+              fontWeight: 'bold',
+              mt: 4,
+              backgroundColor: theme.palette.background.alt
+            }}
+            size="large"
+            variant="primary"
+            endIcon={<Save />}
+            type="submit"
+            disabled={!isValid}
+          >
+            Salvar
+          </Button>
+        </Box>
+      </form>
     </Box>
   )
 }

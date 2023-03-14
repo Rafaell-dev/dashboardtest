@@ -8,7 +8,7 @@ function sleep(delay = 0) {
   })
 }
 
-const AutocompleteMotoristas = () => {
+const AutocompleteMotoristas = ({ onSelect, value, setFieldValue }) => {
   const { data, isLoading } = useGetMotoristaQuery()
 
   const [open, setOpen] = React.useState(false)
@@ -26,7 +26,16 @@ const AutocompleteMotoristas = () => {
       await sleep(1e3) // For demo purposes.
 
       if (active) {
-        setOptions([...data])
+        if (data.length === 0) {
+          setOptions('Nenhum Motorista disponível')
+          console.log('Nenhum Motorista disponível')
+        } else {
+          const filteredDrivers = data.filter(
+            driver => driver.reservedVehicle === false
+          )
+          setOptions([...filteredDrivers])
+          console.log(filteredDrivers)
+        }
       }
     })()
 
@@ -40,9 +49,18 @@ const AutocompleteMotoristas = () => {
       setOptions([])
     }
   }, [open])
+
+  const handleSelect = (event, valueDriver) => {
+    if (onSelect) {
+      onSelect(valueDriver._id) // Chama a função "onSelect" com o valor selecionado
+      console.log('Handle Driver: ' + valueDriver._id)
+      setFieldValue(`driverID`, valueDriver._id)
+    }
+  }
+
   return (
     <Autocomplete
-      id="asynchronous-auto"
+      id="driverID"
       open={open}
       onOpen={() => {
         setOpen(true)
@@ -51,6 +69,7 @@ const AutocompleteMotoristas = () => {
         setOpen(false)
       }}
       getOptionLabel={option => option.name + ' - ' + option.cnh}
+      onChange={handleSelect}
       options={options}
       loading={loading}
       renderInput={params => (

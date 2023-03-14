@@ -4,17 +4,20 @@ import './index.css'
 import App from './App'
 import { configureStore } from '@reduxjs/toolkit'
 import globalReducer from 'state'
+// import motoristaReducer from 'state'
 import { Provider } from 'react-redux'
 import { api } from 'state/api'
-import { ErrorBoundary } from 'react-error-boundary'
+import { setupListeners } from '@reduxjs/toolkit/dist/query'
 
 const store = configureStore({
   reducer: {
     global: globalReducer,
+    // motorista: motoristaReducer,
     [api.reducerPath]: api.reducer
   },
   middleware: getDefault => getDefault().concat(api.middleware)
 })
+setupListeners(store.dispatch)
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(

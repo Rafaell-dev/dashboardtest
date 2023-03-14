@@ -92,3 +92,63 @@ export const getVeiculosSearch = async (req, res) => {
     res.status(404).json({ message: error.message })
   }
 }
+// Create
+export const postCreateMotorista = async (req, res) => {
+  const { name, email, cnh, city, state, country, phoneNumber } = req.body
+
+  const newMotorista = new Motorista({
+    name,
+    email,
+    cnh,
+    city,
+    state,
+    country,
+    phoneNumber
+  })
+
+  try {
+    await newMotorista.save()
+
+    res.status(201).json(newMotorista)
+  } catch (error) {
+    res.status(409).json({ message: error.message })
+  }
+}
+//Update
+export const putMotorista = async (req, res) => {
+  const id = req.params.id
+  await Motorista.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Motorista não encontrado.`
+        })
+      } else {
+        res.status(200).send({ message: 'Motorista Atualizado.' })
+      }
+    })
+    .catch(error => {
+      res.status(500).send({
+        message: error.message
+      })
+    })
+}
+
+//Delete
+export const deleteMotorista = async (req, res) => {
+  await Motorista.findByIdAndRemove(req.params.id)
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Motorista não encontrado.`
+        })
+      } else {
+        res.status(200).send({ message: 'Motorista Removido.' })
+      }
+    })
+    .catch(error => {
+      res.status(500).send({
+        message: error.message
+      })
+    })
+}

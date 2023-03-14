@@ -18,30 +18,27 @@ export const tokensDark = {
   primary: {
     // blue
     100: '#d3d4de',
-    200: '#D3ECFD',
+    200: '#a6a9be',
     300: '#7a7f9d',
-    400: '#2F334C', // Active text sidebar
-    500: '#1F3265', // manually adjusted background sidebar
-    600: '#191F45', // manually adjusted
-    700: '#141937', // Dark Blue
-    800: '#FF0000',
+    400: '#4d547d',
+    500: '#21295c',
+    600: '#191F45', // manually adjusted background
+    700: '#141937',
+    800: '#0d1025',
     900: '#070812'
   },
   secondary: {
     // blue
-    50: '#FF0000', // manually adjusted
-    100: '#D3ECFD', // Text main
-    200: '#D3ECFD', // Icons sidebar and topics
-    300: '#A1D2F5',
-    400: '#87C8F7',
-    500: '#6DBEF8',
-    600: '#D3ECFD', //Active background sidebar
-    700: '#191F45',
-    800: '#191F45',
-    900: '#0496FF'
-  },
-  blue: {
-    500: '#0496FF'
+    50: '#EFEFF1', // manually adjusted
+    100: '#ffffff',
+    200: '#0592E6',
+    300: '#05A3FF',
+    400: '#ffda85',
+    500: '#ffd166',
+    600: '#0496FF',
+    700: '#0E0E10',
+    800: '#0E0E10',
+    900: '#332a14'
   }
 }
 
@@ -86,11 +83,6 @@ export const themeSettings = mode => {
             background: {
               default: tokensDark.primary[600],
               alt: tokensDark.primary[500]
-            },
-            blue: {
-              ...tokensDark.blue,
-              main: tokensDark.blue[500],
-              light: tokensDark.blue[500]
             }
           }
         : {
@@ -112,11 +104,6 @@ export const themeSettings = mode => {
             background: {
               default: tokensDark.grey[0],
               alt: tokensDark.grey[50]
-            },
-            blue: {
-              ...tokensLight.blue,
-              main: tokensDark.blue[500],
-              light: tokensDark.blue[500]
             }
           })
     },
@@ -146,6 +133,53 @@ export const themeSettings = mode => {
       h6: {
         fontFamily: ['Inter', 'sans-serif'].join(','),
         fontSize: 14
+      }
+    },
+
+    components: {
+      MuiButtonBase: {
+        defaultProps: {
+          disableTouchRipple: true,
+          disableRipple: true,
+          focusRipple: false,
+          sx: {
+            '&:hover': {
+              backgroundColor: '#6A9FE6',
+              '@media (hover: none)': {
+                backgroundColor: 'transparent'
+              }
+            }
+          }
+        }
+      },
+      MuiButton: {
+        defaultProps: {
+          disableElevation: true,
+          disableTouchRipple: true,
+          disableRipple: true,
+          focusRipple: false,
+          sx: {
+            '&:hover': {
+              backgroundColor: '#00a8e8',
+              '@media (hover: none)': {
+                backgroundColor: 'transparent'
+              }
+            }
+          }
+        }
+      },
+      // add a global hover style for all components that use sx
+      MuiCssBaseline: {
+        styleOverrides: {
+          '& .MuiListItem-root:hover': {
+            '&:hover': {
+              backgroundColor: '#6A9FE6',
+              '@media (hover: none)': {
+                backgroundColor: 'transparent'
+              }
+            }
+          }
+        }
       }
     }
   }

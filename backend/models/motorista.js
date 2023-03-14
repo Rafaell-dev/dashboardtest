@@ -25,10 +25,15 @@ const UserSchema = new mongoose.Schema(
     state: String,
     country: String,
     phoneNumber: String,
+    birthday: Date,
     role: {
       type: String,
       enum: ['user', 'admin', 'superadmin'],
-      default: 'admin'
+      default: 'user'
+    },
+    reservedVehicle: {
+      type: Boolean,
+      default: false
     }
   },
   {

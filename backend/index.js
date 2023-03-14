@@ -6,9 +6,12 @@ import morgan from 'morgan'
 import cors from 'cors'
 import mongoose from 'mongoose'
 
-// import motoristaRoutes from './routes/motoristas.js'
-import clientRoutes from './routes/client.js'
+// import clientRoutes from './routes/client.js'
 import generalRoutes from './routes/general.js'
+
+import veiculoRoutes from './routes/veiculo.js'
+import motoristaRoutes from './routes/motorista.js'
+import retiradaRoutes from './routes/retirada.js'
 
 // Config
 dotenv.config()
@@ -33,8 +36,10 @@ app.use(cors())
 
 // Rotas
 // app.use('/motoristas', motoristaRoutes)
-app.use('/client', clientRoutes)
+app.use('/motorista', motoristaRoutes)
+app.use('/veiculo', veiculoRoutes)
 app.use('/general', generalRoutes)
+app.use('/retirada', retiradaRoutes)
 
 // Mongoose config
 mongoose.set('strictQuery', true)
@@ -52,7 +57,6 @@ mongoose
     // User.insertMany(dataUser)
     // motorista.insertMany(dataMotoristas)
     // Veiculo.insertMany(dataVeiculos)
-
   })
   .catch(error =>
     console.log(`${error}\n não foi possivel estabelecer conexão`)

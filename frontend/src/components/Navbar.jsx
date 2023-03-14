@@ -23,6 +23,7 @@ import {
   useTheme
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import BasicModal from './ModalConfig'
 
 const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
   const dispatch = useDispatch()
@@ -33,6 +34,16 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
   const isOpen = Boolean(anchorEl)
   const handleClick = e => setAnchorEl(e.currentTarget)
   const handleClose = () => setAnchorEl(null)
+
+  const [openModal, setOpenModal] = useState(false)
+
+  const handleOpenModal = () => {
+    setOpenModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setOpenModal(false)
+  }
 
   return (
     <AppBar sx={{ position: 'static', background: 'none', boxShadow: 'none' }}>
@@ -63,9 +74,10 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
               <LightModeOutlined sx={{ fontSize: '25px' }} />
             )}
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleOpenModal}>
             <SettingsOutlined sx={{ fontSize: '25px' }} />
           </IconButton>
+          <BasicModal open={openModal} onClose={handleCloseModal} />
           <FlexBetween>
             <Button
               onClick={handleClick}

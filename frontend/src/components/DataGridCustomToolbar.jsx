@@ -1,6 +1,12 @@
 import React from 'react'
 import { Search } from '@mui/icons-material'
-import { IconButton, TextField, InputAdornment, useMediaQuery } from '@mui/material'
+import {
+  IconButton,
+  TextField,
+  InputAdornment,
+  useMediaQuery,
+  useTheme
+} from '@mui/material'
 import Alert from '@mui/material/Alert'
 import {
   GridToolbarDensitySelector,
@@ -10,21 +16,30 @@ import {
 } from '@mui/x-data-grid'
 import FlexBetween from 'components/Flexbetween'
 
-
 const DataGridCustomToolbar = ({ searchInput, setSearchInput, setSearch }) => {
-  
+  const theme = useTheme()
   return (
-   
     <GridToolbarContainer>
       <FlexBetween width="100%">
         <FlexBetween>
-          <GridToolbarColumnsButton />
-          <GridToolbarDensitySelector />
+          <GridToolbarColumnsButton
+            sx={{
+              color: theme.palette.secondary[100]
+            }}
+          />
+          <GridToolbarDensitySelector
+            sx={{
+              color: theme.palette.secondary[100]
+            }}
+          />
           <GridToolbarExport
             csv={{ fileName: 'Planilha Genius' }}
             printOptions={{
               hideFooter: true,
               hideToolbar: true
+            }}
+            sx={{
+              color: theme.palette.secondary[100]
             }}
           />
         </FlexBetween>

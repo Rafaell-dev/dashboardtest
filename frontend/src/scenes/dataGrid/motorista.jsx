@@ -52,20 +52,10 @@ const Motorista = () => {
       flex: 0.5
     },
     {
-      field: 'country',
-      headerName: 'País',
-      flex: 0.5
-    },
-    {
       field: 'phoneNumber',
       headerName: 'Celular',
       flex: 0.5
     },
-    {
-      field: 'role',
-      headerName: 'Cargo',
-      flex: 0.5
-    }
   ]
   return (
     <Box m="1.5rem 2.5rem">

@@ -7,12 +7,10 @@ const StatBox = ({ title, value, increase, icon, description }) => {
   return (
     <Box
       gridColumn="span 2"
-      gridRow="span 1"
       display="flex"
       flexDirection="column"
       justifyContent="space-between"
-      p="1.25rem 1rem"
-      flex="1 1 100%"
+      p="1rem 1rem"
       backgroundColor={theme.palette.background.alt}
       borderRadius="0.55rem"
     >

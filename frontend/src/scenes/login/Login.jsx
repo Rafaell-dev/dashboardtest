@@ -1,55 +1,96 @@
 import React, { useEffect, useState } from 'react'
-import { Box, useTheme, TextField, useMediaQuery, Grid } from '@mui/material'
+import {
+  Box,
+  useTheme,
+  TextField,
+  Button,
+  CssBaseline,
+  Container
+} from '@mui/material'
 import FlexBetween from 'components/Flexbetween'
 import logoGenius from '../../assets/logo_genius.svg'
-import PrimaryButton from 'components/PrimaryButton'
+
 const Login = () => {
-  const isNonMobile = useMediaQuery('(min-width: 1000px)')
   const theme = useTheme()
+  const handleSubmit = event => {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+    console.log({
+      email: data.get('email'),
+      password: data.get('password')
+    })
+  }
   return (
-    <Grid
-      height={1}
-      mt="1.5rem"
-      container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
-      gridTemplateColumns="repeat(2, minmax(0, 1fr))"
+    <Container
+      component="main"
+      maxWidth="xs"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh'
+      }}
     >
-      <Box m="1.5rem 2rem 2rem 3rem">
-        <FlexBetween color={theme.palette.secondary.main}>
-          <Box display="flex" mr={2}>
-            <Box
-              sx={{ height: 40 }}
-              component="img"
-              alt="Genius"
-              src={logoGenius}
-            />
-          </Box>
-        </FlexBetween>
-      </Box>
-      <Box my={4} item>
-        <TextField
-          fullWidth
-          id="user"
-          label="Usuário"
-          defaultValue=""
-          variant="outlined"
-        />
-      </Box>
-      <Box xs={6} item>
-        <TextField
-          fullWidth
-          id="filled-read-only-input"
-          label="Senha"
-          defaultValue=""
-          variant="outlined"
-        />
-      </Box>
+      <CssBaseline />
       <Box>
-        <PrimaryButton text="Entrar" />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mb: 4
+          }}
+        >
+          <FlexBetween color={theme.palette.secondary.main}>
+            <Box display="flex" mr={2}>
+              <Box
+                sx={{ height: 40 }}
+                component="img"
+                alt="Genius"
+                src={logoGenius}
+              />
+            </Box>
+          </FlexBetween>
+        </Box>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            fullWidth
+            id="email"
+            label="Email"
+            name="email"
+            autoComplete="email"
+            autoFocus
+            InputLabelProps={{
+              shrink: true
+            }}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            name="password"
+            label="Senha"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            InputLabelProps={{
+              shrink: true
+            }}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            size="large"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Entrar
+          </Button>
+        </Box>
       </Box>
-    </Grid>
+    </Container>
   )
 }
 

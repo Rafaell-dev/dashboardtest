@@ -8,7 +8,7 @@ function sleep(delay = 0) {
   })
 }
 
-const AutocompleteVeiculos = () => {
+const AutocompleteVeiculos = ({ onSelect, value, setFieldValue }) => {
   const { data, isLoading } = useGetVeiculoQuery()
 
   const [open, setOpen] = React.useState(false)
@@ -26,7 +26,11 @@ const AutocompleteVeiculos = () => {
       await sleep(1e3) // For demo purposes.
 
       if (active) {
-        setOptions([...data])
+        const filteredVehicles = data.filter(
+          vehicle => vehicle.status === 'disponivel'
+        )
+        setOptions([...filteredVehicles])
+        console.log(filteredVehicles)
       }
     })()
 
@@ -40,9 +44,17 @@ const AutocompleteVeiculos = () => {
       setOptions([])
     }
   }, [open])
+
+  const handleSelect = (event, valueVehicle) => {
+    if (onSelect) {
+      onSelect(valueVehicle._id) // Chama a função "onSelect" com o valor selecionado
+      console.log('Handle: ' + valueVehicle._id)
+      setFieldValue(`vehicleID`, valueVehicle._id)
+    }
+  }
   return (
     <Autocomplete
-      id="asynchronous-auto"
+      id="vehicleID"
       open={open}
       onOpen={() => {
         setOpen(true)
@@ -51,6 +63,7 @@ const AutocompleteVeiculos = () => {
         setOpen(false)
       }}
       getOptionLabel={option => option.brand + ' - ' + option.plate}
+      onChange={handleSelect}
       options={options}
       loading={loading}
       renderInput={params => (

@@ -21,6 +21,7 @@ import {
   TodayOutlined,
   DirectionsCar,
   Groups2Outlined,
+  PersonAddAlt1,
   Badge
 } from '@mui/icons-material'
 import { useEffect, useState } from 'react'
@@ -28,7 +29,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import FlexBetween from './Flexbetween'
 import profileImage from 'assets/profile.png'
 import logoGenius from 'assets/logo_genius.svg'
-import BasicModal from './ModalConfig'
 
 const navItem = [
   {
@@ -84,19 +84,8 @@ const Sidebar = ({
   useEffect(() => {
     setActive(pathname.substring(1))
   }, [pathname])
-
-  const [openModal, setOpenModal] = useState(false)
-
-  const handleOpenModal = () => {
-    setOpenModal(true)
-  }
-
-  const handleCloseModal = () => {
-    setOpenModal(false)
-  }
   return (
     <Box component="nav">
-      <BasicModal open={openModal} onClose={handleCloseModal} />
       {isSidebarOpen && (
         <Drawer
           open={isSidebarOpen}
@@ -136,11 +125,7 @@ const Sidebar = ({
               {navItem.map(({ text, icon }) => {
                 if (!icon) {
                   return (
-                    <Typography
-                      fontWeight="bold"
-                      key={text}
-                      sx={{ m: '2.25rem 0 1rem 3rem' }}
-                    >
+                    <Typography fontWeight='bold' key={text} sx={{ m: '2.25rem 0 1rem 3rem' }}>
                       {text}
                     </Typography>
                   )
@@ -189,11 +174,7 @@ const Sidebar = ({
 
           <Box position="absolute" bottom="2rem">
             <Divider />
-            <FlexBetween
-              textTransform="none"
-              gap="1rem"
-              m="1.5rem 2rem 0rem 2rem"
-            >
+            <FlexBetween textTransform="none" gap="1rem" m="1.5rem 2rem 0 3rem">
               <Box
                 component="img"
                 alt="profile"
@@ -219,9 +200,12 @@ const Sidebar = ({
                   {user.occupation}
                 </Typography>
               </Box>
-              <IconButton onClick={handleOpenModal}>
-                <SettingsOutlined sx={{ fontSize: '25px' }} />
-              </IconButton>
+              <SettingsOutlined
+                sx={{
+                  color: theme.palette.secondary[100],
+                  fontSize: '25px '
+                }}
+              />
             </FlexBetween>
           </Box>
         </Drawer>
