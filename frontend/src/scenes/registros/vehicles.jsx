@@ -1,5 +1,5 @@
-import React from 'react'
-import { Box, useMediaQuery } from '@mui/material'
+import React, { useState } from 'react'
+import { Box, Button, TextField, useMediaQuery } from '@mui/material'
 import Header from 'components/Header'
 import { useGetVeiculoQuery } from 'state/api'
 import CardVehicle from 'components/CardVehicle.jsx'
@@ -8,10 +8,48 @@ const Veiculos = () => {
   const { data, isLoading } = useGetVeiculoQuery()
   const isNonMobile = useMediaQuery('(min-width: 800px)')
 
+  const [searchTerm, setSearchTerm] = useState('')
+  const filteredData = data
+    ? data.filter(
+        ({ description, plate, brand }) =>
+          brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          plate.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          description.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : []
+
+  const handleSearch = () => {
+    // handle search logic
+  }
+
   return (
     <Box m="1.5rem 2.5rem">
       <Header title="Veiculos" subtitle="Altere ou exclua algum veículo" />
-      {data || !isLoading ? (
+
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.8rem',
+          my: '1.5rem'
+        }}
+      >
+        <TextField
+          variant="outlined"
+          size="small"
+          label="Pesquisar"
+          value={searchTerm}
+          onChange={e => setSearchTerm(e.target.value)}
+          InputLabelProps={{
+            shrink: true
+          }}
+        />
+        <Button variant="contained" onClick={handleSearch}>
+          Pesquisar
+        </Button>
+      </Box>
+
+      {filteredData.length ? (
         <Box
           mt="20px"
           display="grid"
@@ -23,7 +61,7 @@ const Veiculos = () => {
             '& > div': { gridColumn: isNonMobile ? undefined : 'span 4' }
           }}
         >
-          {data.map(
+          {filteredData.map(
             ({
               _id,
               plate,

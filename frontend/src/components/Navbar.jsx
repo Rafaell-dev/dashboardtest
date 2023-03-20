@@ -9,7 +9,7 @@ import {
 
 import FlexBetween from 'components/Flexbetween'
 import { useDispatch } from 'react-redux'
-import { setMode } from 'state'
+import { setLogout, setMode } from 'state'
 import profileImage from 'assets/profile.png'
 import {
   AppBar,
@@ -45,6 +45,15 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
     setOpenModal(false)
   }
 
+  const handleLogout = () => {
+    dispatch(setLogout())
+    navigate('/')
+  }
+
+  const handleChangePassword = () => {
+    navigate('/changePassword')
+  }
+
   return (
     <AppBar sx={{ position: 'static', background: 'none', boxShadow: 'none' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -53,17 +62,6 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
           <IconButton onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <MenuIcon />
           </IconButton>
-          {/* <FlexBetween
-            backgroundColor={theme.palette.background.alt}
-            borderRadius="9px"
-            gap="3rem"
-            p="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Procurar..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween> */}
         </FlexBetween>
         {/* RIGHT SIDE */}
         <FlexBetween gap="1.5rem">
@@ -111,7 +109,7 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
                   fontSize="0.75rem"
                   sx={{ color: theme.palette.secondary[200] }}
                 >
-                  {user.occupation}
+                  {user.role}
                 </Typography>
               </Box>
               <ArrowDropDownOutlined
@@ -127,13 +125,8 @@ const Navbar = ({ user, isSidebarOpen, setIsSidebarOpen }) => {
               onClose={handleClose}
               anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-              <MenuItem
-                onClick={() => {
-                  navigate(`/login`)
-                }}
-              >
-                Sair
-              </MenuItem>
+              <MenuItem onClick={handleLogout}>Sair</MenuItem>
+              <MenuItem onClick={handleChangePassword}>Alterar Senha</MenuItem>
             </Menu>
           </FlexBetween>
         </FlexBetween>

@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Box, useMediaQuery, TextField, Button } from '@mui/material'
 import Header from 'components/Header'
-import { useGetMotoristaQuery } from 'state/api'
+import { useGetUserQuery } from 'state/api'
 import CardDriver from 'components/CardDriver.jsx'
 
-const Motoristas = () => {
-  const { data, isLoading } = useGetMotoristaQuery()
+const Users = () => {
+  const { data, isLoading } = useGetUserQuery()
   const isNonMobile = useMediaQuery('(min-width: 800px)')
 
   const [searchTerm, setSearchTerm] = useState('')
@@ -24,7 +24,7 @@ const Motoristas = () => {
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="Motoristas" subtitle="Altere ou exclua um registro" />
+      <Header title="Usuários" subtitle="Altere ou exclua um registro" />
 
       <Box
         sx={{
@@ -98,4 +98,4 @@ const Motoristas = () => {
   )
 }
 
-export default Motoristas
+export default Users

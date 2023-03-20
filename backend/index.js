@@ -10,9 +10,14 @@ import mongoose from 'mongoose'
 import generalRoutes from './routes/general.js'
 
 import veiculoRoutes from './routes/veiculo.js'
-import motoristaRoutes from './routes/motorista.js'
+import userRoutes from './routes/user.js'
 import retiradaRoutes from './routes/retirada.js'
+import abastecimentoRoutes from './routes/abastecimento.js'
 
+import authRoutes from './routes/auth.js'
+import { register } from './controllers/auth.js'
+import { users } from './data/users.js'
+import User from './models/User.js'
 // Config
 dotenv.config()
 const app = express()
@@ -36,10 +41,15 @@ app.use(cors())
 
 // Rotas
 // app.use('/motoristas', motoristaRoutes)
-app.use('/motorista', motoristaRoutes)
+
+app.post('/auth/register', register)
+app.use('/auth', authRoutes)
+
+app.use('/user', userRoutes)
 app.use('/veiculo', veiculoRoutes)
 app.use('/general', generalRoutes)
 app.use('/retirada', retiradaRoutes)
+app.use('/abastecimento', abastecimentoRoutes)
 
 // Mongoose config
 mongoose.set('strictQuery', true)
@@ -54,7 +64,7 @@ mongoose
     app.listen(PORT, () => console.log(`Server Port: ${PORT}`))
     // Only add data one time
 
-    // User.insertMany(dataUser)
+    // User.insertMany(users)
     // motorista.insertMany(dataMotoristas)
     // Veiculo.insertMany(dataVeiculos)
   })

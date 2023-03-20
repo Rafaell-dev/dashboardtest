@@ -16,18 +16,16 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import {
-  useDeleteMotoristaMutation,
-  useGetMotoristaQuery,
-  usePutMotoristaMutation
+  useDeleteUserMutation,
+  useGetUserQuery,
+  usePutUserMutation
 } from 'state/api'
 import Header from 'components/HeaderV2'
 import { format, parseISO } from 'date-fns'
 import { useFormik } from 'formik'
-import { motoristaSchema } from 'schemas'
+import { userSchema } from 'schemas'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { useEffect } from 'react'
-import dayjs from 'dayjs'
 
 const styleModal = {
   position: 'absolute',
@@ -63,30 +61,30 @@ const CardVehicle = ({
   const handleOpenEditModal = () => setOpenEditModal(true)
   const handleCloseEditModal = () => setOpenEditModal(false)
 
-  const { refetch } = useGetMotoristaQuery()
+  const { refetch } = useGetUserQuery()
   const handleRefresh = () => {
     refetch()
   }
 
-  const [deleteMotorista, { response }] = useDeleteMotoristaMutation()
+  const [deleteUser, { response }] = useDeleteUserMutation()
 
   const onSubmitDelete = async (values, actions) => {
     try {
-      const response = await deleteMotorista(_id)
+      const response = await deleteUser(_id)
       handleCloseDeleteModal()
       handleRefresh()
-      console.log('Motorista removido id:' + _id)
+      console.log('Usuário removido id:' + _id)
     } catch (error) {
       console.log('Ocorreu um erro:' + error)
     }
   }
 
-  const [updateMotorista, { isLoading, isSuccess, isError, error }] =
-    usePutMotoristaMutation({ tchOnMountOrArgChange: true })
+  const [updateUser, { isLoading, isSuccess, isError, error }] =
+    usePutUserMutation({ tchOnMountOrArgChange: true })
 
   const onSubmit = async (values, actions) => {
     try {
-      const motoristaValues = {
+      const userValues = {
         _id: values._id,
         name: values.name,
         email: values.email,
@@ -98,7 +96,7 @@ const CardVehicle = ({
         birthday: values.birthday,
         role: values.role
       }
-      const response = await updateMotorista(motoristaValues)
+      const response = await updateUser(userValues)
       console.log(_id)
       console.log('Dados enviados com sucesso:', response)
       handleRefresh()
@@ -130,7 +128,7 @@ const CardVehicle = ({
       birthday: birthday ? format(parseISO(birthday), 'yyyy-MM-dd') : null,
       role: role
     },
-    validationSchema: motoristaSchema,
+    validationSchema: userSchema,
     onSubmit
   })
 
@@ -256,7 +254,7 @@ const CardVehicle = ({
         id={_id}
       >
         <Box sx={styleModal} key={_id}>
-          <Header title="Motorista" subtitle="Altere um registro" />
+          <Header title="Usuários" subtitle="Altere um registro" />
           <form onSubmit={handleSubmit}>
             <Box my="1rem">{AlertFeedback}</Box>
             <Box

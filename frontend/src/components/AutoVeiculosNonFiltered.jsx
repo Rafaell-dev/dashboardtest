@@ -1,6 +1,6 @@
 import { Autocomplete, CircularProgress, TextField } from '@mui/material'
 import React, { useState } from 'react'
-import { useGetMotoristaQuery } from 'state/api'
+import { useGetVeiculoQuery } from 'state/api'
 
 function sleep(delay = 0) {
   return new Promise(resolve => {
@@ -8,8 +8,8 @@ function sleep(delay = 0) {
   })
 }
 
-const AutocompleteMotoristas = ({ onSelect, value, setFieldValue }) => {
-  const { data, isLoading } = useGetMotoristaQuery()
+const AutocompleteVeiculos = ({ onSelect, value, setFieldValue }) => {
+  const { data, isLoading } = useGetVeiculoQuery()
 
   const [open, setOpen] = React.useState(false)
   const [options, setOptions] = React.useState([])
@@ -26,16 +26,9 @@ const AutocompleteMotoristas = ({ onSelect, value, setFieldValue }) => {
       await sleep(1e3) // For demo purposes.
 
       if (active) {
-        if (data.length === 0) {
-          setOptions('Nenhum Motorista disponível')
-          console.log('Nenhum Motorista disponível')
-        } else {
-          const filteredDrivers = data.filter(
-            driver => driver.reservedVehicle === false
-          )
-          setOptions([...filteredDrivers])
-          console.log(filteredDrivers)
-        }
+        const filteredVehicles = data // Removido o filtro de veículos
+        setOptions([...filteredVehicles])
+        console.log(filteredVehicles)
       }
     })()
 
@@ -50,17 +43,16 @@ const AutocompleteMotoristas = ({ onSelect, value, setFieldValue }) => {
     }
   }, [open])
 
-  const handleSelect = (event, valueDriver) => {
+  const handleSelect = (event, valueVehicle) => {
     if (onSelect) {
-      onSelect(valueDriver._id) // Chama a função "onSelect" com o valor selecionado
-      console.log('Handle Driver: ' + valueDriver._id)
-      setFieldValue(`driverID`, valueDriver._id)
+      onSelect(valueVehicle._id) // Chama a função "onSelect" com o valor selecionado
+      console.log('Handle: ' + valueVehicle._id)
+      setFieldValue(`vehicleID`, valueVehicle._id)
     }
   }
-
   return (
     <Autocomplete
-      id="driverID"
+      id="vehicleID"
       open={open}
       onOpen={() => {
         setOpen(true)
@@ -68,14 +60,14 @@ const AutocompleteMotoristas = ({ onSelect, value, setFieldValue }) => {
       onClose={() => {
         setOpen(false)
       }}
-      getOptionLabel={option => option.name + ' - ' + option.cnh}
+      getOptionLabel={option => option.brand + ' - ' + option.plate}
       onChange={handleSelect}
       options={options}
       loading={loading}
       renderInput={params => (
         <TextField
           {...params}
-          label="Motorista"
+          label="Veículo"
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -93,4 +85,5 @@ const AutocompleteMotoristas = ({ onSelect, value, setFieldValue }) => {
   )
 }
 
-export default AutocompleteMotoristas
+
+export default AutocompleteVeiculos

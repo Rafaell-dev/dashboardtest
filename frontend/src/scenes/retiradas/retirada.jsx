@@ -5,30 +5,21 @@ import {
   useTheme,
   useMediaQuery,
   TextField,
-  Alert,
-  Autocomplete,
-  CircularProgress
+  Alert
 } from '@mui/material'
 import Header from 'components/HeaderV2'
 import { Save } from '@mui/icons-material'
 import AutocompleteVeiculos from 'components/AutocompleteVeiculo'
-import AutocompleteMotoristas from 'components/AutoCompleteMotorista'
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { useField, useFormik } from 'formik'
+import { retiradaSchema } from 'schemas'
+import { useFormik } from 'formik'
 import {
-  usePutVeiculoMutation,
   usePostRetiradaMutation,
-  usePutMotoristaMutation,
-  useGetRetiradaQuery
+  useGetRetiradaQuery,
 } from 'state/api'
 import { useState } from 'react'
-
-function sleep(delay = 0) {
-  return new Promise(resolve => {
-    setTimeout(resolve, delay)
-  })
-}
+import { useSelector } from 'react-redux'
 
 const Retirada = () => {
   const isNonMobile = useMediaQuery('(min-width: 1000px)')
@@ -37,68 +28,42 @@ const Retirada = () => {
   const [selectedVehicle, setSelectedVehicle] = useState(null)
 
   const handleSelectVehicle = vehicle => {
+    console.log('Handle vehicle', vehicle)
     setSelectedVehicle(vehicle)
     setFieldValue('vehicleID', vehicle)
   }
-
   useEffect(() => {
     console.log(selectedVehicle)
   }, [selectedVehicle])
 
-  const [selectedDriver, setSelectedDriver] = useState(null)
-
-  const handleSelectDriver = driver => {
-    setSelectedDriver(driver)
-    setFieldValue('driverID', driver)
-  }
-
-  useEffect(() => {
-    console.log(selectedDriver)
-  }, [selectedDriver])
-
-  const [createRetirada, { isLoading, isSuccess, isError, error }] =
-    usePostRetiradaMutation({ refetchOnMountOrArgChange: true })
-
   const [
-    updateVehicle,
-    {
-      isLoading: updateVehicleLoading,
-      isError: updateVehicleIsError,
-      isSuccess: updateVehicleIsSuccess
-    }
-  ] = usePutVeiculoMutation({ refetchOnMountOrArgChange: true })
-
-  const [
-    updateDriver,
-    {
-      isLoading: updateDriverLoading,
-      isError: updateDriverIsError,
-      isSuccess: updateDriverIsSuccess
-    }
-  ] = usePutMotoristaMutation({ refetchOnMountOrArgChange: true })
+    createRetirada,
+    { isLoading, isSuccess, isError, error: errorRetirada }
+  ] = usePostRetiradaMutation({ refetchOnMountOrArgChange: true })
 
   const { refetch: retiradaRefetch } = useGetRetiradaQuery()
+
   const handleRefresh = () => {
     retiradaRefetch()
   }
 
-  const onSubmit = async (values, actions) => {
+  const driver = useSelector(state => state.persistedReducer.user)
+  console.log('id:', driver._id)
+
+  const onSubmit = async actions => {
     try {
-      console.log(values)
-      createRetirada(values)
-      await updateVehicle({
-        _id: values.vehicleID,
-        status: 'reservado'
-      })
-      await updateDriver({
-        _id: values.driverID,
-        reservedVehicle: true
-      })
+      const RetiradaValues = {
+        dataRetirada: values.dataRetirada,
+        dataRetorno: values.dataRetorno,
+        driverID: driver._id,
+        vehicleID: values.vehicleID
+      }
+      await createRetirada(RetiradaValues)
       await new Promise(resolve => setTimeout(resolve, 1000))
       resetForm()
       handleRefresh()
     } catch {
-      console.log('Não foi possivel salvar os dados' + isError)
+      console.log('Não foi possivel salvar os dados')
     }
   }
 
@@ -111,13 +76,14 @@ const Retirada = () => {
     handleSubmit,
     isValid,
     resetForm,
-    setFieldValue
+    setFieldValue,
+    setFieldError
   } = useFormik({
     initialValues: {
       dataRetirada: null,
       dataRetorno: null,
-      driverID: null,
-      vehicleID: null
+      driverID: driver._id,
+      vehicleID: ''
     },
     onSubmit
   })
@@ -131,7 +97,10 @@ const Retirada = () => {
     )
   } else if (isError) {
     AlertFeedback = (
-      <Alert severity="error">Não foi possível salvar os dados!</Alert>
+      <Alert severity="error">
+        Não foi possível salvar os dados!
+        <br /> {errorRetirada?.data?.error}
+      </Alert>
     )
   }
 
@@ -157,6 +126,8 @@ const Retirada = () => {
               value={values.dataRetirada || null}
               onChange={date => {
                 setFieldValue('dataRetirada', date)
+                setFieldValue('dataRetorno', null)
+                setFieldError('dataRetorno', undefined)
               }}
               format="dd/MM/yyyy HH:mm"
               inputFormat="DD/MM/YYYY HH:mm"
@@ -181,6 +152,7 @@ const Retirada = () => {
               onChange={date => {
                 setFieldValue('dataRetorno', date)
               }}
+              minDate={values.dataRetirada}
               format="dd/MM/yyyy HH:mm"
               inputFormat="DD/MM/YYYY HH:mm"
               renderInput={params => (
@@ -199,11 +171,8 @@ const Retirada = () => {
             onSelect={handleSelectVehicle}
             value={values.vehicleID}
             setFieldValue={setFieldValue}
-          />
-          <AutocompleteMotoristas
-            onSelect={handleSelectDriver}
-            value={values.driverID}
-            setFieldValue={setFieldValue}
+            error={touched.vehicleID && Boolean(errors.vehicleID)}
+            helperText={touched.vehicleID && errors.vehicleID}
           />
         </Box>
         <Box

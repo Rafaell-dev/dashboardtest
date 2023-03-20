@@ -1,10 +1,10 @@
 import { Typography, Box, useTheme } from '@mui/material'
 import React from 'react'
-import { useGetMotoristaQuery } from 'state/api'
+import { useGetUserQuery } from 'state/api'
 
 const Header = ({ title, subtitle }) => {
   const theme = useTheme()
-  const { data, isLoading } = useGetMotoristaQuery()
+  const { data, isLoading } = useGetUserQuery()
   return (
     <Box>
       <Typography

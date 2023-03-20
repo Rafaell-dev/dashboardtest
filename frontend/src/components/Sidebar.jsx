@@ -29,43 +29,53 @@ import FlexBetween from './Flexbetween'
 import profileImage from 'assets/profile.png'
 import logoGenius from 'assets/logo_genius.svg'
 import BasicModal from './ModalConfig'
+import { useSelector } from 'react-redux'
 
 const navItem = [
   {
     text: 'Dashboard',
-    icon: <HomeOutlined />
+    icon: <HomeOutlined />,
+    permission: ['superadmin']
   },
   {
     text: 'Registros',
-    icon: null
+    icon: null,
+    permission: ['superadmin']
   },
   {
     text: 'Veículos',
-    icon: <DirectionsCar />
+    icon: <DirectionsCar />,
+    permission: ['superadmin']
   },
   {
-    text: 'Motoristas',
-    icon: <Groups2Outlined />
+    text: 'Usuários',
+    icon: <Groups2Outlined />,
+    permission: ['superadmin']
   },
   {
     text: 'Cadastrar',
-    icon: null
+    icon: null,
+    permission: ['superadmin', 'user']
   },
   {
-    text: 'Abastecimentos',
-    icon: <PointOfSaleOutlined />
+    text: 'Abastecimento',
+    icon: <PointOfSaleOutlined />,
+    permission: ['superadmin', 'user']
   },
   {
-    text: 'Retiradas',
-    icon: <TodayOutlined />
+    text: 'Retirada',
+    icon: <TodayOutlined />,
+    permission: ['superadmin', 'user']
   },
   {
     text: 'Veículo',
-    icon: <DirectionsCar />
+    icon: <DirectionsCar />,
+    permission: ['superadmin']
   },
   {
-    text: 'Motorista',
-    icon: <Badge />
+    text: 'Usuário',
+    icon: <Badge />,
+    permission: ['superadmin']
   }
 ]
 
@@ -80,6 +90,8 @@ const Sidebar = ({
   const [active, setActive] = useState('')
   const navigate = useNavigate()
   const theme = useTheme()
+  const role = useSelector(state => state.persistedReducer.user?.role ?? 'guest')
+  console.log(role)
 
   useEffect(() => {
     setActive(pathname.substring(1))
@@ -94,6 +106,7 @@ const Sidebar = ({
   const handleCloseModal = () => {
     setOpenModal(false)
   }
+
   return (
     <Box component="nav">
       <BasicModal open={openModal} onClose={handleCloseModal} />
@@ -133,7 +146,10 @@ const Sidebar = ({
               </FlexBetween>
             </Box>
             <List>
-              {navItem.map(({ text, icon }) => {
+              {navItem.map(({ text, icon, permission }) => {
+                if (permission && !permission.includes(role)) {
+                  return null
+                }
                 if (!icon) {
                   return (
                     <Typography
@@ -216,7 +232,7 @@ const Sidebar = ({
                   fontSize="0.8rem"
                   sx={{ color: theme.palette.secondary[200] }}
                 >
-                  {user.occupation}
+                  {user.role}
                 </Typography>
               </Box>
               <IconButton onClick={handleOpenModal}>

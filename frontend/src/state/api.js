@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.REACT_APP_BASE_URL }),
-  reducerPath: 'adminApi',
+  reducerPath: 'api',
   tagTypes: [
     'User',
     'Veiculos',
@@ -17,11 +17,33 @@ export const api = createApi({
     'RetiradaSearch'
   ],
   endpoints: build => ({
-    getUser: build.query({
-      query: id => `general/user/${id}`,
-      providesTags: ['User']
+    postLogin: build.mutation({
+      query: ({ email, password }) => ({
+        url: `auth/login`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: { email, password }
+      })
     }),
-
+    postRegister: build.mutation({
+      query: (payload) => ({
+        url: `auth/register`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: payload
+      })
+    }),
+    putUserAuth: build.mutation({
+      query: ({ ...payload }) => ({
+        url: `auth/updateUser/${payload._id}`,
+        method: 'PUT',
+        body: payload
+      })
+    }),
     //Veículo
 
     getVeiculo: build.query({
@@ -59,40 +81,39 @@ export const api = createApi({
 
     //Motorista
 
-    getMotorista: build.query({
-      query: () => `motorista/motoristas`,
+    getUser: build.query({
+      query: () => `user/getUsers`,
       providesTags: [`Motoristas`]
     }),
-    getMotoristaById: build.query({
-      query: id => `motorista/motoristaById/${id}`,
+    getUserById: build.query({
+      query: id => `user/userById/${id}`,
       providesTags: (result, error, id) => [{ type: 'Motoristas', id }]
     }),
-    getMotoristaSearch: build.query({
+    getUsersSearch: build.query({
       query: ({ page, pageSize, sort, search }) => ({
-        url: 'motorista/motoristasSearch',
+        url: 'user/UsersSearch',
         method: 'GET',
         params: { page, pageSize, sort, search }
       }),
       providesTags: ['MotoristasSearch']
     }),
-
-    postMotorista: build.mutation({
+    postUser: build.mutation({
       query: payload => ({
-        url: 'motorista/createMotorista',
+        url: 'auth/register',
         method: 'POST',
         body: payload
       })
     }),
-    putMotorista: build.mutation({
+    putUser: build.mutation({
       query: ({ ...payload }) => ({
-        url: `motorista/updateMotorista/${payload._id}`,
+        url: `user/updateUser/${payload._id}`,
         method: 'PUT',
         body: payload
       })
     }),
-    deleteMotorista: build.mutation({
+    deleteUser: build.mutation({
       query: id => ({
-        url: `motorista/deleteMotorista/${id}`,
+        url: `user/deleteUser/${id}`,
         method: 'DELETE'
       })
     }),
@@ -123,7 +144,37 @@ export const api = createApi({
         method: 'PUT',
         body: payload
       })
-    })
+    }),
+    
+    //Abastecimento
+    getAbastecimento: build.query({
+      query: () => `abastecimento/abastecimentos`,
+      providesTags: [`Abastecimentos`]
+    }),
+    getAbastecimentoSearch: build.query({
+      query: ({ page, pageSize, sort, search }) => ({
+        url: 'abastecimento/abastecimentosSearch',
+        method: 'GET',
+        params: { page, pageSize, sort, search }
+      }),
+      providesTags: ['AbastecimentoSearch']
+    }),
+    postAbastecimento: build.mutation({
+      query: payload => ({
+        url: `abastecimento/createAbastecimento`,
+        method: 'POST',
+        body: payload
+      })
+    }),
+    putAbastecimento: build.mutation({
+      query: ({ ...payload }) => ({
+        url: `abastecimento/updateAbastecimento/${payload._id}`,
+        method: 'PUT',
+        body: payload
+      })
+    }),
+
+
   })
 })
 
@@ -131,27 +182,35 @@ export const refreshVeiculos = () => {
   api.endpoints.getVeiculo.invalidateTags(['Veiculos'])
 }
 export const refreshMotorista = () => {
-  api.endpoints.getMotorista.invalidateTags(['Motoristas'])
+  api.endpoints.getUser.invalidateTags(['Usuários'])
 }
 export const refreshRetirada = () => {
   api.endpoints.getRetirada.invalidateTags(['Retiradas'])
 }
+export const refreshAbastecimento = () => {
+  api.endpoints.getAbastecimento.invalidateTags(['Abastecimentos'])
+}
 
 export const {
-  useGetUserQuery,
+  usePostLoginMutation,
   useGetVeiculoQuery,
   useGetVeiculoSearchQuery,
   usePutVeiculoMutation,
   usePostVeiculoMutation,
   useDeleteVeiculoMutation,
-  useGetMotoristaQuery,
-  useGetMotoristaByIdQuery,
-  useGetMotoristaSearchQuery,
-  usePostMotoristaMutation,
-  usePutMotoristaMutation,
-  useDeleteMotoristaMutation,
+  useGetUserQuery,
+  useGetUserByIdQuery,
+  useGetUserSearchQuery,
+  usePostUserMutation,
+  usePutUserMutation,
+  useDeleteUserMutation,
   useGetRetiradaQuery,
   usePutRetiradaMutation,
   usePostRetiradaMutation,
-  useGetRetiradaSearchQuery
+  useGetRetiradaSearchQuery,
+  usePutUserAuthMutation,
+  useGetAbastecimentoQuery,
+  useGetAbastecimentoSearchQuery,
+  usePostAbastecimentoMutation,
+  usePutAbastecimentoMutation
 } = api

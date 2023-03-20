@@ -1,15 +1,15 @@
-import Motorista from '../models/motorista.js'
+import User from '../models/User.js'
 
-export const getMotoristas = async (req, res) => {
+export const getUsers = async (req, res) => {
   try {
-    const motoristas = await Motorista.find()
-    res.status(200).json(motoristas)
+    const Users = await User.find()
+    res.status(200).json(Users)
   } catch (error) {
     res.status(404).json({ message: error.message })
   }
 }
 
-export const getMotoristasSearch = async (req, res) => {
+export const getUsersSearch = async (req, res) => {
   try {
     const { page = 1, pageSize = 20, sort = null, search = '' } = req.query
 
@@ -22,7 +22,7 @@ export const getMotoristasSearch = async (req, res) => {
     }
     const sortFormatted = Boolean(sort) ? generateSort() : {}
 
-    const motoristasSearch = await Motorista.find({
+    const UsersSearch = await User.find({
       $or: [
         { name: { $regex: new RegExp(search, 'i') } },
         { city: { $regex: new RegExp(search, 'i') } }
@@ -33,12 +33,12 @@ export const getMotoristasSearch = async (req, res) => {
       .skip(page * pageSize)
       .limit(pageSize)
 
-    const total = await Motorista.countDocuments({
+    const total = await User.countDocuments({
       name: { $regex: search, $options: 'i' }
     })
 
     res.status(200).json({
-      motoristasSearch,
+      UsersSearch,
       total
     })
   } catch (error) {
@@ -46,64 +46,66 @@ export const getMotoristasSearch = async (req, res) => {
   }
 }
 
-export const getMotoristaById = async (req, res) => {
+export const getUserById = async (req, res) => {
   try {
-    const motorista = await Motorista.findById(req.params.id)
-    if (!motorista) {
-      return res.status(404).json({ message: 'Motorista não encontrado.' })
+    const User = await User.findById(req.params.id)
+    if (!User) {
+      return res.status(404).json({ message: 'Usuário não encontrado.' })
     }
-    res.json(motorista)
+    res.json(User)
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: 'Erro ao buscar motorista.' })
+    res.status(500).json({ message: 'Erro ao buscar Usuário.' })
   }
 }
 
 // Create
-export const postCreateMotorista = async (req, res) => {
+export const postCreateUser = async (req, res) => {
   const {
     name,
     email,
+    password,
+    role,
     cnh,
+    reservedVehicle,
     city,
     state,
     country,
-    phoneNumber,
-    birthday,
-    role
+    phoneNumber
   } = req.body
 
-  const newMotorista = new Motorista({
+  const newUser = new User({
     name,
     email,
+    password,
+    role,
     cnh,
+    reservedVehicle,
     city,
     state,
     country,
-    phoneNumber,
-    birthday,
-    role
+    phoneNumber
   })
 
   try {
-    await newMotorista.save()
+    await newUser.save()
 
-    res.status(201).json(newMotorista)
+    res.status(201).json(newUser)
   } catch (error) {
     res.status(409).json({ message: error.message })
   }
 }
 //Update
-export const putMotorista = async (req, res) => {
+export const putUser = async (req, res) => {
   const id = req.params.id
-  await Motorista.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  await User.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Motorista não encontrado.`
+          message: `Usuário não encontrado.`
         })
       } else {
-        res.status(200).send({ message: 'Motorista Atualizado.' })
+        res.status(200).send({ message: 'Usuário Atualizado.' })
       }
     })
     .catch(error => {
@@ -114,15 +116,15 @@ export const putMotorista = async (req, res) => {
 }
 
 //Delete
-export const deleteMotorista = async (req, res) => {
-  await Motorista.findByIdAndRemove(req.params.id)
+export const deleteUser = async (req, res) => {
+  await User.findByIdAndRemove(req.params.id)
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Motorista não encontrado.`
+          message: `Usuário não encontrado.`
         })
       } else {
-        res.status(200).send({ message: 'Motorista Removido.' })
+        res.status(200).send({ message: 'Usuário Removido.' })
       }
     })
     .catch(error => {

@@ -1,17 +1,16 @@
-import { DataGrid } from '@mui/x-data-grid'
-import { Button, useTheme } from '@mui/material'
+import React, { useState } from 'react'
+import { Box, Button, useTheme } from '@mui/material'
+import Header from 'components/Header'
 import {
-  useGetUserQuery,
-  useGetRetiradaSearchQuery,
+  useGetAbastecimentoSearchQuery,
   useGetVeiculoQuery,
-  usePutUserMutation,
-  usePutRetiradaMutation,
-  usePutVeiculoMutation
+  useGetUserQuery
 } from 'state/api'
-import { useEffect, useState } from 'react'
+import { DataGrid } from '@mui/x-data-grid'
 import DataGridCustomToolbar from 'components/DataGridCustomToolbar'
+import { useEffect } from 'react'
 
-const RetiradaDataGrid = () => {
+const Abastecimentos = () => {
   const theme = useTheme()
 
   //Values to be send to the backend
@@ -21,18 +20,16 @@ const RetiradaDataGrid = () => {
   const [search, setSearch] = useState('')
 
   const [searchInput, setSearchInput] = useState('')
-
   const {
-    data: retiradaData,
-    isLoading: retiradaDataLoading,
-    refetch: retiradaRefetch
-  } = useGetRetiradaSearchQuery({
+    data: abastecimentoData,
+    isLoading: abastecimentoDataLoading,
+    refetch: abastecimentoRefetch
+  } = useGetAbastecimentoSearchQuery({
     page,
     pageSize,
     sort: JSON.stringify(sort),
     search
   })
-
   const { data: motoristaData, isLoading: motoristaDataLoading } =
     useGetUserQuery()
   const { data: veiculoData, isLoading: veiculoDataLoading } =
@@ -61,16 +58,8 @@ const RetiradaDataGrid = () => {
     }
   }, [veiculoData, veiculoDataLoading])
 
+  console.log('data', abastecimentoData)
   const columns = [
-    {
-      field: 'vehicleID',
-      headerName: 'Veículo',
-      flex: 0.3,
-      valueGetter: params => {
-        const veiculo = veiculos[params.value]
-        return veiculo ? veiculo.plate : 'Veículo não encontrado'
-      }
-    },
     {
       field: 'driverID',
       headerName: 'Motorista',
@@ -81,99 +70,61 @@ const RetiradaDataGrid = () => {
       }
     },
     {
-      field: 'dataRetirada',
-      headerName: 'Data Retirada',
+      field: 'vehicleID',
+      headerName: 'Veiculo',
       flex: 0.5,
       valueGetter: params => {
-        const dataRetorno = new Date(params.value)
-        return dataRetorno.toLocaleString()
+        const veiculo = veiculos[params.value]
+        return veiculo ? veiculo.plate : 'Veículo não encontrado'
       }
     },
     {
-      field: 'dataRetorno',
-      headerName: 'Data Devolução',
-      flex: 0.5,
-      valueGetter: params => {
-        const dataRetorno = new Date(params.value)
-        return dataRetorno.toLocaleString()
-      }
+      field: 'fuel',
+      headerName: 'Combustível',
+      flex: 0.3
     },
     {
-      field: 'statusRetirada',
-      headerName: 'Status',
-      flex: 0.5,
-      valueGetter: params => {
-        return params.row ? params.row.statusRetirada : 'null'
-      }
+      field: 'precoLitro',
+      headerName: 'Preço/Litro',
+      flex: 0.3
     },
     {
-      field: 'Finalizar',
-      headerName: '',
-      renderCell: params => (
-        <Button
-          disabled={params.row.statusRetirada !== 'Aberto'}
-          variant="contained"
-          onClick={() => handleFinalizar(params.row)}
-          sx={{
-            background: theme.palette.background.alt
-          }}
-        >
-          Finalizar
-        </Button>
-      )
+      field: 'kmAtual',
+      headerName: 'KM Atual',
+      flex: 0.3,
+    },
+    {
+      field: 'litros',
+      headerName: 'Litros',
+      flex: 0.3,
+    },
+    {
+      field: 'data',
+      headerName: 'data',
+      flex: 0.5,
+      valueGetter: params => {
+        const dataAbastecimento = new Date(params.value)
+        return dataAbastecimento.toLocaleString()
+      }
     }
   ]
-  const [updateVehicle] = usePutVeiculoMutation({
-    refetchOnMountOrArgChange: true
-  })
-
-  const [updateDriver] = usePutUserMutation({ refetchOnMountOrArgChange: true })
-
-  const [updateRetirada] = usePutRetiradaMutation({
-    refetchOnMountOrArgChange: true
-  })
-
   const handleRefresh = () => {
-    retiradaRefetch()
-  }
-
-  const handleFinalizar = async params => {
-    try {
-      const vehicleToUpdate = {
-        _id: params.vehicleID,
-        status: 'disponivel'
-      }
-
-      const driverToUpdate = {
-        _id: params.driverID,
-        reservedVehicle: false
-      }
-
-      const retiradaToUpdate = {
-        _id: params._id,
-        statusRetirada: 'Encerrado'
-      }
-
-      await updateVehicle(vehicleToUpdate)
-      await updateDriver(driverToUpdate)
-      await updateRetirada(retiradaToUpdate)
-
-      handleRefresh()
-    } catch (error) {
-      console.error('Erro ao salvar os dados:', error)
-    }
+    abastecimentoRefetch()
   }
   return (
-    <div style={{ height: '20rem', width: '100%' }}>
+    <Box style={{ height: '20rem', width: '100%' }}>
+      <Header />
       <Button variant="contained" size="small" onClick={handleRefresh}>
         Atualizar
       </Button>
       <DataGrid
-        loading={retiradaDataLoading || !retiradaData}
+        loading={abastecimentoDataLoading || !abastecimentoData}
         getRowId={row => row._id}
-        rows={(retiradaData && retiradaData.retiradaSearch) || []}
+        rows={
+          (abastecimentoData && abastecimentoData.abastecimentoSearch) || []
+        }
         columns={columns}
-        rowCount={(retiradaData && retiradaData.total) || 0}
+        rowCount={(abastecimentoData && abastecimentoData.total) || 0}
         rowsPerPageOptions={[1, 20, 50, 100]}
         pagination
         page={page}
@@ -198,11 +149,11 @@ const RetiradaDataGrid = () => {
           '@media print': {
             '.MuiDataGrid-main': { color: 'rgba(0, 0, 0, 0.87)' }
           },
-
           ' .MuiDataGrid-columnSeparator': { display: 'none' }
         }}
       />
-    </div>
+    </Box>
   )
 }
-export default RetiradaDataGrid
+
+export default Abastecimentos

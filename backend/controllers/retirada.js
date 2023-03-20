@@ -1,6 +1,6 @@
 import Retirada from '../models/Retirada.js'
-import motorista from '../models/motorista.js'
 import Veiculo from '../models/Veiculo.js'
+import User from '../models/User.js'
 
 // Cria uma nova retirada
 export const postRetirada = async (req, res) => {
@@ -9,15 +9,22 @@ export const postRetirada = async (req, res) => {
 
     // Verifica se o veículo e motorista existem
     const veiculo = await Veiculo.findById(vehicleID)
-    const driver = await motorista.findById(driverID)
-    console.log('VehicleID' + vehicleID)
-    console.log('DriverID' + driverID)
+    const driver = await User.findById(driverID)
+    const driverReserved = await Retirada.findOne({
+      driverID: driverID,
+      statusRetirada: 'Aberto'
+    })
 
     if (!veiculo) {
       return res.status(400).json({ error: 'Veículo não encontrado' })
     }
     if (!driver) {
       return res.status(400).json({ error: 'Motorista não encontrado' })
+    }
+    if (driverReserved) {
+      return res
+        .status(400)
+        .json({ error: 'Motorista não pode abrir mais de uma reserva' })
     }
 
     // Cria a nova retirada
@@ -31,6 +38,12 @@ export const postRetirada = async (req, res) => {
     // Salva a nova retirada no banco de dados
     await retirada.save()
 
+    veiculo.status = 'reservado'
+    await veiculo.save()
+
+    driver.reservedVehicle = true
+    await driver.save()
+    
     res.status(201).json(retirada)
   } catch (error) {
     console.log(error)

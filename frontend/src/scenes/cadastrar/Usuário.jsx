@@ -5,36 +5,38 @@ import {
   useTheme,
   useMediaQuery,
   TextField,
-  Alert
+  Alert,
+  Autocomplete
 } from '@mui/material'
 import Header from 'components/HeaderV2'
 import { Save } from '@mui/icons-material'
-import { usePostMotoristaMutation } from 'state/api'
+import { usePostUserMutation } from 'state/api'
 import { useFormik } from 'formik'
-import { motoristaSchema } from 'schemas'
+import { userSchema } from 'schemas'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 
-const Motorista = () => {
+const User = () => {
   const isNonMobile = useMediaQuery('(min-width: 1000px)')
   const theme = useTheme()
 
-  const [createMotorista, { isLoading, isSuccess, isError, error }] =
-    usePostMotoristaMutation({ refetchOnMountOrArgChange: true })
+  const [createUser, { isLoading, isSuccess, isError, error }] =
+    usePostUserMutation({ refetchOnMountOrArgChange: true })
 
   const onSubmit = async (values, actions) => {
     try {
-      const motoristaValues = {
+      const userValues = {
         name: values.name,
+        email: values.email,
+        password: values.password,
+        role: values.role,
         cnh: values.cnh,
         city: values.city,
         state: values.state,
-        birthday: values.birthday,
-        email: values.email,
         phoneNumber: values.phoneNumber
       }
       console.log(values)
-      createMotorista(motoristaValues)
+      createUser(userValues)
       console.log('submitted!')
       await new Promise(resolve => setTimeout(resolve, 1000))
       resetForm()
@@ -57,13 +59,14 @@ const Motorista = () => {
     initialValues: {
       name: '',
       email: '',
+      password: 'User@@2023',
+      role: '',
       cnh: '',
-      state: '',
       city: '',
-      birthday: '',
+      state: '',
       phoneNumber: ''
     },
-    validationSchema: motoristaSchema,
+    validationSchema: userSchema,
     onSubmit
   })
 
@@ -82,7 +85,7 @@ const Motorista = () => {
 
   return (
     <Box m="1.5rem 2.5rem">
-      <Header title="Motorista" subtitle="Cadastre um Motorista" />
+      <Header title="Usuários" subtitle="Cadastre um Usuário" />
       <form onSubmit={handleSubmit} autoComplete="off">
         <Box my="1rem">{AlertFeedback}</Box>
         <Box
@@ -122,10 +125,24 @@ const Motorista = () => {
             id="cnh"
             label="Registro CNH"
             variant="filled"
+            name="cnh"
             value={values.cnh}
             onChange={handleChange}
             onBlur={handleBlur}
             helperText={errors.cnh && touched.cnh && `${errors.cnh}`}
+          />
+          <TextField
+            disabled
+            autoComplete="disabled"
+            id="password"
+            label="Senha"
+            variant="filled"
+            value={values.password}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            helperText={
+              errors.password && touched.password && `${errors.password}`
+            }
           />
           <TextField
             autoComplete="disabled"
@@ -137,6 +154,7 @@ const Motorista = () => {
             onBlur={handleBlur}
             helperText={errors.email && touched.email && `${errors.email}`}
           />
+
           <TextField
             autoComplete="disabled"
             id="city"
@@ -170,6 +188,23 @@ const Motorista = () => {
               touched.phoneNumber &&
               `${errors.phoneNumber}`
             }
+          />
+          <Autocomplete
+            disablePortal
+            id="role"
+            value={values.role}
+            onChange={(event, newValue) => {
+              setFieldValue('role', newValue)
+            }}
+            options={['', 'user', 'superadmin']}
+            renderInput={params => (
+              <TextField
+                {...params}
+                label="Cargo"
+                error={touched.role && Boolean(errors.role)}
+                helperText={touched.role && errors.role}
+              />
+            )}
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -221,4 +256,4 @@ const Motorista = () => {
   )
 }
 
-export default Motorista
+export default User

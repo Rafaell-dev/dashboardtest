@@ -50,7 +50,7 @@ const CardVehicle = ({
   sequence,
   category
 }) => {
-  const [deleteMotorista, { response }] = useDeleteVeiculoMutation({
+  const [deleteVeiculo, { response }] = useDeleteVeiculoMutation({
     category,
     refetchOnMountOrArgChange: true
   })
@@ -69,7 +69,7 @@ const CardVehicle = ({
 
   const onSubmitDelete = async (values, actions) => {
     try {
-      const response = await deleteMotorista(_id)
+      const response = await deleteVeiculo(_id)
       console.log('Veiculo removido id:' + _id)
       handleCloseDeleteModal()
     } catch (error) {

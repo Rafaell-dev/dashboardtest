@@ -15,19 +15,38 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       min: 5
     },
-    city: String,
-    state: String,
-    country: String,
-    occupation: String,
-    phoneNumber: String,
-    transactions: Array,
+    password: {
+      type: String,
+      required: true,
+      min: 8
+    },
     role: {
       type: String,
       enum: ['user', 'admin', 'superadmin'],
-      default: 'admin'
+      default: 'user'
+    },
+    cnh: {
+      type: Number,
+      required: false,
+      length: 11,
+      unique: true
+    },
+    reservedVehicle: {
+      type: Boolean,
+      default: false
+    },
+    city: String,
+    state: String,
+    country: { type: String, default: 'BR' },
+    phoneNumber: String,
+    forcePasswordChange: {
+      type: Boolean,
+      default: true
     }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 )
 
 const User = mongoose.model('User', UserSchema)
